@@ -2,7 +2,11 @@
   (:import (org.graalvm.polyglot Context)))
 
 ;; note that is also supports Ruby, LLVM, and JS
-(def context (Context/create (into-array ["python" "R"])))
+(def context
+  (->
+   (Context/newBuilder (into-array ["python" "R"]))
+   (.allowAllAccess true)
+   (.build)))
 
 
 ;;;;;;;;;;; INTEROP WITH R ;;;;;;;;;;;;;;;;;;
@@ -27,7 +31,7 @@ sum.of.squares(3,4)
 (->clojure result1) ;=> 25
 
 (.eval context "R" "
-install.packages(\"numDeriv\", repos = \"http://cran.case.edu/\")
+install.packages(\"numDeriv\")
 ")
 
 (def result2 (.eval context "R" "
